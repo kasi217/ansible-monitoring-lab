@@ -1,0 +1,49 @@
+# install_node_exporter.yml
+- name: Install Node Exporter
+  hosts: targets
+  become: yes
+  tasks:
+    - name: Create user for node_exporter
+      user:
+        name: node_exporter
+        shell: /sbin/nologin
+
+    - name: Download Node Exporter tar.gz
+      get_url:
+        url: https://github.com/prometheus/node_exporter/releases/download/v1.7.0/node_exporter-1.7.0.linux-amd64.tar.gz
+        dest: /tmp/node_exporter.tar.gz
+
+    - name: Extract Node Exporter
+      unarchive:
+        src: /tmp/node_exporter.tar.gz
+        dest: /opt/
+        remote_src: yes
+
+    - name: Symlink binary to /usr/local/bin
+      file:
+        src: /opt/node_exporter-1.7.0.linux-amd64/node_exporter
+        dest: /usr/local/bin/node_exporter
+        state: link
+
+    - name: Create systemd service file
+      copy:
+        dest: /etc/systemd/system/node_exporter.service
+        content: |
+          [Unit]
+          Description=Node Exporter
+          After=network.target
+
+          [Service]
+          User=node_exporter
+          ExecStart=/usr/local/bin/node_exporter
+
+          [Install]
+          WantedBy=default.target
+
+    - name: Reload systemd and enable service
+      systemd:
+        daemon_reload: yes
+        name: node_exporter
+        enabled: yes
+        state: started
+
