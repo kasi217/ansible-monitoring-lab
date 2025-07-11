@@ -19,3 +19,4 @@ git clone https://github.com/<your-username>/ansible-monitoring-lab.git
 cd ansible-monitoring-lab
 
 # Test
+## Setup Instructions (added in update-readme branch)
