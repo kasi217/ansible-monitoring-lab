@@ -1,0 +1,13 @@
+---
+- name: Check Filesystem Usage
+  hosts: all
+  become: yes
+  tasks:
+    - name: Run df -h to get filesystem usage
+      ansible.builtin.command: df -h
+      register: filesystem_output
+
+    - name: Show filesystem status
+      ansible.builtin.debug:
+        var: filesystem_output.stdout_lines
+
