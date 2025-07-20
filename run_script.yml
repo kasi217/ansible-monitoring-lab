@@ -1,0 +1,8 @@
+---
+- name: Execute aaa.sh in background on servers
+  hosts: server2,server3  # Replace with your target hosts or group
+  tasks:
+    - name: Run aaa.sh in the background with nohup
+      shell: "nohup /root/aaa.sh > /root/aaa.log 2>&1 &"
+      args:
+        executable: /bin/bash
